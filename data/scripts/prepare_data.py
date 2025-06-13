@@ -2,47 +2,17 @@ import os
 from datasets import load_dataset
 import json
 
-def parse_and_split_st_eli5(output_dir="data/processed", test_size=0.1, val_size=0.1):
+def prepare_and_split_eli5(output_dir="data/processed", test_size=0.1, val_size=0.1):
     """
-    Loads the sentence-transformers/eli5 dataset, parses the text field into
-    instruction-output pairs, splits it into train, validation, and test sets,
-    and saves them as JSON files.
+    Loads the sentence-transformers/eli5 dataset, splits it into train,
+    validation, and test sets, and saves them as JSON files.
     """
     print("Loading sentence-transformers/eli5 dataset...")
     # Load the training split of the dataset
     dataset = load_dataset("sentence-transformers/eli5", split="train")
 
-    def parse_text_to_instruction_output(example):
-        text = example['text']
-        # The text is structured as "question: [Question] answer: [Answer]"
-        # We'll split based on " answer: "
-        parts = text.split(" answer: ")
-        if len(parts) == 2:
-            question_part, answer_part = parts
-            # Remove the "question: " prefix from the question part
-            if question_part.startswith("question: "):
-                question = question_part[len("question: "):].strip()
-                instruction = f"Explain the following like I'm 5: {question}"
-                output = answer_part.strip()
-                return {"instruction": instruction, "output": output}
-        
-        # Return empty fields if parsing fails, to be filtered out later
-        return {"instruction": "", "output": ""}
-
-    print("Parsing and formatting dataset...")
-    formatted_dataset = dataset.map(parse_text_to_instruction_output, batched=False)
-    
-    # Filter out any examples that failed parsing
-    original_size = len(formatted_dataset)
-    formatted_dataset = formatted_dataset.filter(lambda x: x['instruction'] and x['output'])
-    new_size = len(formatted_dataset)
-    print(f"Filtered out {original_size - new_size} examples that couldn't be parsed.")
-
-    # Remove original columns
-    formatted_dataset = formatted_dataset.remove_columns(['text'])
-    
     # Shuffle the dataset before splitting
-    shuffled_dataset = formatted_dataset.shuffle(seed=42)
+    shuffled_dataset = dataset.shuffle(seed=42)
 
     print("Splitting data into train, validation, and test sets...")
     # Create a 80% train / 20% test+validation split
@@ -77,4 +47,4 @@ def parse_and_split_st_eli5(output_dir="data/processed", test_size=0.1, val_size
 
 
 if __name__ == "__main__":
-    parse_and_split_st_eli5() 
+    prepare_and_split_eli5() 
