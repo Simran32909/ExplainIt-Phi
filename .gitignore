@@ -1,0 +1,30 @@
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# IDE files
+.idea/
+*.swp
+*.swo
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Data files - might be large
+data/raw/
+data/processed/
+
+# Models - definitely large
+models/
+*.gguf
+
+# Notebook checkpoints
+.ipynb_checkpoints
+
+# WandB logs
+/wandb/
+
+#guides
+roadplan.md
