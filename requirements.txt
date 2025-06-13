@@ -1,0 +1,9 @@
+transformers
+accelerate
+datasets
+bitsandbytes
+peft
+llama-cpp-python
+jupyter
+gradio
+wandb 
