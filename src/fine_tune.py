@@ -55,6 +55,14 @@ class LogPredictionsCallback(TrainerCallback):
             predictions_table.add_data(q,gt,gen)
         wandb.log({"Evaluation Predictions":predictions_table})
 
+def preprocess_function(examples, tokenizer):
+    texts = [
+        f"### Instruction:\nExplain the following like I'm 5: {q}\n\n### Answer:\n{a}"
+        for q, a in zip(examples['question'], examples['answer'])
+    ]
+
+    return tokenizer(texts, truncation=True, max_length=config.SFT_MAX_SEQ_LENGTH)
+
 def main():
     wandb.init(
         entity="BrainLoop",        
@@ -63,11 +71,17 @@ def main():
         config=config.hyperparameters 
     )
     
-    print("Loading Dataset.....")
-    train_dataset=load_dataset("json", data_files=config.TRAIN_DATASET, split="train")
-    val_dataset=load_dataset("json", data_files=config.VAL_DATASET, split="train")
+    print("Loading and preprocessing datasets...")
 
-    print("Loading Model & Tokenizer.....")
+    tokenizer = AutoTokenizer.from_pretrained(config.BASE_MODEL_NAME, trust_remote_code=True)
+    tokenizer.pad_token = tokenizer.eos_token
+    tokenizer.padding_side = "left"
+
+    train_dataset = load_dataset("json", data_files=config.TRAIN_DATASET, split="train")
+    val_dataset = load_dataset("json", data_files=config.VAL_DATASET, split="train")
+
+    train_dataset = train_dataset.map(lambda exs: preprocess_function(exs, tokenizer), batched=True)
+    val_dataset = val_dataset.map(lambda exs: preprocess_function(exs, tokenizer), batched=True)
 
     quant_config=BitsAndBytesConfig(**config.BNB_CONFIG)
 
@@ -78,10 +92,6 @@ def main():
         use_cache=False,
         device_map="auto",
     )
-
-    tokenizer=AutoTokenizer.from_pretrained(config.BASE_MODEL_NAME)   
-    tokenizer.pad_token=tokenizer.eos_token
-    tokenizer.padding_side="left"
 
     peft_config=LoraConfig(**config.PEFT_CONFIG)
 
@@ -101,10 +111,7 @@ def main():
         train_dataset=train_dataset,
         eval_dataset=val_dataset,
         peft_config=peft_config,
-        max_seq_length=config.SFT_MAX_SEQ_LENGTH,
-        tokenizer=tokenizer,
         args=training_arguments,
-        formatting_func=config.formatting_func,
         callbacks=[prediction_callback],
     )
 
