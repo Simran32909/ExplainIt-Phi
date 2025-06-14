@@ -13,7 +13,7 @@ OUTPUT_DIR="models/phi2-eli5-adapter"
 BNB_CONFIG={
     "load_in_4bit":True,
     "bnb_4bit_quant_type":"nf4",
-    "bnb_4bit_compute_dtype":torch.float16,
+    "bnb_4bit_compute_dtype":"float16",
 }
 
 #LORA Configs
@@ -28,7 +28,7 @@ PEFT_CONFIG={
 
 #Training Arguements
 TRAINING_ARGS={
-    "num_train_epochs":100,
+    "num_train_epochs":1,
     "per_device_train_batch_size":2,
     "gradient_accumulation_steps":4,
     "optim":"adamw_torch",
@@ -41,7 +41,7 @@ TRAINING_ARGS={
     "max_steps": -1,
     "warmup_ratio": 0.03,
     "lr_scheduler_type": "constant",
-    "evaluation_strategy": "steps",
+    "eval_strategy": "steps",
     "eval_steps": 50,
     "report_to": "wandb",
 }
@@ -51,3 +51,15 @@ SFT_MAX_SEQ_LENGTH=1024
 def formatting_func(example):
     text = f"### Instruction:\nExplain the following like I'm 5: {example['question']}\n\n### Answer:\n{example['answer']}"
     return text
+
+# clean dictionary for wandb logging
+hyperparameters = {
+    "base_model_name": BASE_MODEL_NAME,
+    "train_dataset": TRAIN_DATASET,
+    "val_dataset": VAL_DATASET,
+    "output_dir": OUTPUT_DIR,
+    "bnb_config": BNB_CONFIG,
+    "peft_config": PEFT_CONFIG,
+    "training_args": TRAINING_ARGS,
+    "sft_max_seq_length": SFT_MAX_SEQ_LENGTH,
+}
