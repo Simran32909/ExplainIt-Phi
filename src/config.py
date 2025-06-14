@@ -1,0 +1,53 @@
+#src/config.py
+
+import torch
+BASE_MODEL_NAME="microsoft/phi-2"
+
+TRAIN_DATASET="data/processed/train.json"
+VAL_DATASET="data/processed/validation.json"
+
+#saves the fine tuned model
+OUTPUT_DIR="models/phi2-eli5-adapter"
+
+#Quantizations Configs
+BNB_CONFIG={
+    "load_in_4bit":True,
+    "bnb_4bit_quant_type":"nf4",
+    "bnb_4bit_compute_dtype":torch.float16,
+}
+
+#LORA Configs
+PEFT_CONFIG={
+    "r":16,
+    "lora_alpha":32,
+    "lora_dropout":0.08,
+    "bias":"none",
+    "task_type":"CAUSAL_LM",
+    "target_modules": ["Wqkv", "fc1", "fc2"],
+}
+
+#Training Arguements
+TRAINING_ARGS={
+    "num_train_epochs":100,
+    "per_device_train_batch_size":2,
+    "gradient_accumulation_steps":4,
+    "optim":"adamw_torch",
+    "save_steps": 50,
+    "logging_steps": 10,
+    "learning_rate": 2e-4,
+    "weight_decay": 0.001,
+    "fp16": True,
+    "max_grad_norm": 0.3,
+    "max_steps": -1,
+    "warmup_ratio": 0.03,
+    "lr_scheduler_type": "constant",
+    "evaluation_strategy": "steps",
+    "eval_steps": 50,
+    "report_to": "wandb",
+}
+
+SFT_MAX_SEQ_LENGTH=1024
+
+def formatting_func(example):
+    text = f"### Instruction:\nExplain the following like I'm 5: {example['question']}\n\n### Answer:\n{example['answer']}"
+    return text
