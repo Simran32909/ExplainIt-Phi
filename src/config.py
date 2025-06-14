@@ -9,6 +9,8 @@ VAL_DATASET="data/processed/validation.json"
 #saves the fine tuned model
 OUTPUT_DIR="models/phi2-eli5-adapter"
 
+SFT_MAX_SEQ_LENGTH=1024
+
 #Quantizations Configs
 BNB_CONFIG={
     "load_in_4bit":True,
@@ -38,15 +40,13 @@ TRAINING_ARGS={
     "weight_decay": 0.001,
     "fp16": True,
     "max_grad_norm": 0.3,
-    "max_steps": -1,
+    "max_steps": 100,
     "warmup_ratio": 0.03,
     "lr_scheduler_type": "constant",
     "eval_strategy": "steps",
     "eval_steps": 50,
     "report_to": "wandb",
 }
-
-SFT_MAX_SEQ_LENGTH=1024
 
 def formatting_func(example):
     text = f"### Instruction:\nExplain the following like I'm 5: {example['question']}\n\n### Answer:\n{example['answer']}"
