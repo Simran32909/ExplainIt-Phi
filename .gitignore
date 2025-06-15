@@ -28,3 +28,6 @@ models/
 
 #guides
 roadplan.md
+
+#scripts
+src/check.py

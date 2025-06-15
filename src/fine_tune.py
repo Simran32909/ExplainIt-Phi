@@ -1,5 +1,12 @@
+#src/fine_tune.py
+
 import os 
 import torch
+
+local_wandb_temp_dir = os.path.join(os.getcwd(), "wandb_tmp")
+os.makedirs(local_wandb_temp_dir, exist_ok=True)
+os.environ["WANDB_TEMP"] = local_wandb_temp_dir
+
 from datasets import load_dataset
 from transformers import (
     AutoModelForCausalLM,
@@ -10,8 +17,8 @@ from transformers import (
 )
 from peft import LoraConfig
 from trl import SFTTrainer
-import wandb
 import config
+import wandb
 
 class LogPredictionsCallback(TrainerCallback):
     def __init__(self, tokenizer, eval_dataset, num_samples=10):
@@ -20,8 +27,8 @@ class LogPredictionsCallback(TrainerCallback):
         self.num_samples=num_samples
 
     def on_evaluate(self, args, state, control, model, **kwargs):
-        prompts=[config.formatting_func(ex) for ex in self.eval_dataset]
-        inputs=self.tokenizer(
+        prompts = [config.formatting_func(ex) for ex in self.eval_dataset]
+        inputs = self.tokenizer(
             prompts,
             return_tensors="pt",
             padding=True,
@@ -30,30 +37,30 @@ class LogPredictionsCallback(TrainerCallback):
         ).to(model.device)
     
         with torch.no_grad():
-            outputs=model.generate(
+            outputs = model.generate(
                 **inputs,
                 max_new_tokens=150
             )
-        decoded_outputs=self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
-        questions = [ex['question'] for ex in self.eval_dataset]
-        ground_truth_answers = [ex['answer'] for ex in self.eval_dataset]
-
-        generated_answer=[]
-        answers_marker="### Answer:\n"
-        
+        decoded_outputs = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
+        questions = [str(ex['question']) for ex in self.eval_dataset]
+        ground_truth_answers = [str(ex['answer']) for ex in self.eval_dataset]
+    
+        generated_answer = []
+        answers_marker = "### Answer:\n"
+    
         for pred in decoded_outputs:
             if answers_marker in pred:
-                generated_answer.append(pred.split(answers_marker,1)[1].strip())
+                generated_answer.append(pred.split(answers_marker, 1)[1].strip())
             else:
                 generated_answer.append("No answer found/Formatting error in generation")
-        
-        predictions_table=wandb.Table(
-            columns=["Question", "Ground Truth", "Generated Answer"],
-        )
+    
+        predictions_table = wandb.Table(columns=["Question", "Ground Truth", "Generated Answer"])
+    
+        for q, gt, gen in zip(questions, ground_truth_answers, generated_answer):
+            predictions_table.add_data(str(q), str(gt), str(gen))  # Ensure all are strings
+    
+        wandb.log({"Evaluation Predictions": predictions_table})
 
-        for q,gt,gen in zip(questions, ground_truth_answers, generated_answer):
-            predictions_table.add_data(q,gt,gen)
-        wandb.log({"Evaluation Predictions":predictions_table})
 
 def preprocess_function(examples, tokenizer):
     texts = [

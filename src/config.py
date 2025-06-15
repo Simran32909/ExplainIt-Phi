@@ -1,6 +1,7 @@
 #src/config.py
 
 import torch
+
 BASE_MODEL_NAME="microsoft/phi-2"
 
 TRAIN_DATASET="data/processed/train.json"
@@ -34,17 +35,17 @@ TRAINING_ARGS={
     "per_device_train_batch_size":2,
     "gradient_accumulation_steps":4,
     "optim":"adamw_torch",
-    "save_steps": 50,
-    "logging_steps": 10,
-    "learning_rate": 2e-4,
-    "weight_decay": 0.001,
+    "save_steps": 5,
+    "logging_steps": 5,
+    "learning_rate": 2e-3,
+    "weight_decay": 0.002,
     "fp16": True,
     "max_grad_norm": 0.3,
-    "max_steps": 100,
+    "max_steps": 15,
     "warmup_ratio": 0.03,
     "lr_scheduler_type": "constant",
     "eval_strategy": "steps",
-    "eval_steps": 50,
+    "eval_steps": 2,
     "report_to": "wandb",
 }
 
