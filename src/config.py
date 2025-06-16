@@ -4,6 +4,8 @@ import torch
 
 BASE_MODEL_NAME="microsoft/phi-2"
 
+NUM_SAMPLES_FOR_TESTING=100
+
 TRAIN_DATASET="data/processed/train.json"
 VAL_DATASET="data/processed/validation.json"
 
@@ -41,7 +43,7 @@ TRAINING_ARGS={
     "weight_decay": 0.002,
     "fp16": True,
     "max_grad_norm": 0.3,
-    "max_steps": 15,
+    "max_steps": -1,
     "warmup_ratio": 0.03,
     "lr_scheduler_type": "constant",
     "eval_strategy": "steps",
