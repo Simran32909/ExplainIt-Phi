@@ -3,9 +3,15 @@
 import os 
 import torch
 
-local_wandb_temp_dir = os.path.join(os.getcwd(), "wandb_tmp")
-os.makedirs(local_wandb_temp_dir, exist_ok=True)
-os.environ["WANDB_TEMP"] = local_wandb_temp_dir
+os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+
+local_wandb_tmp_dir = os.path.join(os.getcwd(), "wandb_tmp")
+os.makedirs(local_wandb_tmp_dir, exist_ok=True)
+
+os.environ["WANDB_TEMP"] = local_wandb_tmp_dir
+os.environ["WANDB_DIR"] = local_wandb_tmp_dir
+os.environ["WANDB_CONFIG_DIR"] = local_wandb_tmp_dir
+
 
 from datasets import load_dataset
 from transformers import (
@@ -87,6 +93,13 @@ def main():
     train_dataset = load_dataset("json", data_files=config.TRAIN_DATASET, split="train")
     val_dataset = load_dataset("json", data_files=config.VAL_DATASET, split="train")
 
+    # Check if we are in testing mode to use a subset of the data
+    if config.NUM_SAMPLES_FOR_TESTING:
+        print(f"--- Running in TEST MODE: Using a subset of {config.NUM_SAMPLES_FOR_TESTING} samples. ---")
+        train_dataset = train_dataset.select(range(config.NUM_SAMPLES_FOR_TESTING))
+        val_sample_size = max(1, int(config.NUM_SAMPLES_FOR_TESTING * 0.2))
+        val_dataset = val_dataset.select(range(val_sample_size))
+
     train_dataset = train_dataset.map(lambda exs: preprocess_function(exs, tokenizer), batched=True)
     val_dataset = val_dataset.map(lambda exs: preprocess_function(exs, tokenizer), batched=True)
 
@@ -121,6 +134,11 @@ def main():
         args=training_arguments,
         callbacks=[prediction_callback],
     )
+    print("W&B directories:")
+    print("  WANDB_TEMP:", os.environ.get("WANDB_TEMP"))
+    print("  WANDB_DIR:", os.environ.get("WANDB_DIR"))
+    print("  WANDB_CONFIG_DIR:", os.environ.get("WANDB_CONFIG_DIR"))
+
 
     print("Starting Training.....")
     trainer.train()
