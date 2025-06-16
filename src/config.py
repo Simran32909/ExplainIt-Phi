@@ -4,7 +4,7 @@ import torch
 
 BASE_MODEL_NAME="microsoft/phi-2"
 
-NUM_SAMPLES_FOR_TESTING=100
+NUM_SAMPLES_FOR_TESTING=None
 
 TRAIN_DATASET="data/processed/train.json"
 VAL_DATASET="data/processed/validation.json"
@@ -12,7 +12,7 @@ VAL_DATASET="data/processed/validation.json"
 #saves the fine tuned model
 OUTPUT_DIR="models/phi2-eli5-adapter"
 
-SFT_MAX_SEQ_LENGTH=1024
+SFT_MAX_SEQ_LENGTH=2048
 
 #Quantizations Configs
 BNB_CONFIG={
@@ -34,21 +34,23 @@ PEFT_CONFIG={
 #Training Arguements
 TRAINING_ARGS={
     "num_train_epochs":1,
-    "per_device_train_batch_size":2,
-    "gradient_accumulation_steps":4,
-    "optim":"adamw_torch",
-    "save_steps": 5,
-    "logging_steps": 5,
-    "learning_rate": 2e-3,
+    "per_device_train_batch_size":8,
+    "gradient_accumulation_steps":2,
+    "optim":"paged_adamw_8bit",
+    "save_steps": 50,
+    "logging_steps": 50,
+    "learning_rate": 2e-4,
     "weight_decay": 0.002,
-    "fp16": True,
+    "fp16": False,
+    "bf16": True,
     "max_grad_norm": 0.3,
     "max_steps": -1,
-    "warmup_ratio": 0.03,
-    "lr_scheduler_type": "constant",
+    "warmup_ratio": 0.10,
+    "lr_scheduler_type": "cosine",
     "eval_strategy": "steps",
-    "eval_steps": 2,
+    "eval_steps": 50,
     "report_to": "wandb",
+    "torch_compile": True,
 }
 
 def formatting_func(example):

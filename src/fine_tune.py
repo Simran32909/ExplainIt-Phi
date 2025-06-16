@@ -111,6 +111,7 @@ def main():
         trust_remote_code=True,
         use_cache=False,
         device_map="auto",
+        attn_implementation="flash_attention_2",
     )
 
     peft_config=LoraConfig(**config.PEFT_CONFIG)
