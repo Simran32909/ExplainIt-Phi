@@ -31,3 +31,6 @@ roadplan.md
 
 #scripts
 src/check.py
+
+#wandb temp files
+wandb_tmp/
