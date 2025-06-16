@@ -9,7 +9,7 @@ def prepare_and_split_eli5(output_dir="data/processed", test_size=0.1, val_size=
     """
     print("Loading sentence-transformers/eli5 dataset...")
     # Load the training split of the dataset
-    dataset = load_dataset("sentence-transformers/eli5", split="train[:10000]")
+    dataset = load_dataset("sentence-transformers/eli5", split="train")
 
     # Shuffle the dataset before splitting
     shuffled_dataset = dataset.shuffle(seed=42)
