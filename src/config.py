@@ -18,24 +18,22 @@ SFT_MAX_SEQ_LENGTH=1024
 BNB_CONFIG={
     "load_in_4bit":True,
     "bnb_4bit_quant_type":"nf4",
-    "bnb_4bit_compute_dtype":"bfloat16",
+    "bnb_4bit_compute_dtype":torch.float16,  # Changed from "bfloat16" to torch.float16
+    "bnb_4bit_use_double_quant":True,       # Added for better quantization
 }
 
 #LORA Configs
 PEFT_CONFIG={
-    "r":16,
-    "lora_alpha":32,
-    "lora_dropout":0.08,
+    "r":32,
+    "lora_alpha":64,
+    "lora_dropout":0.05,
     "bias":"none",
     "task_type":"CAUSAL_LM",
-    "target_modules": ["Wqkv", "fc1", "fc2"],
+    "target_modules": ["Wqkv", "fc1", "fc2", "q_proj", "k_proj", "v_proj"],
 }
 
 #Training Arguements
 TRAINING_ARGS={
-    "num_train_epochs":3,
-    "per_device_train_batch_size":8,
-    "gradient_accumulation_steps":2,
     "num_train_epochs":3,
     "per_device_train_batch_size":6,
     "per_device_eval_batch_size":6,
@@ -45,19 +43,19 @@ TRAINING_ARGS={
     "logging_steps": 50,
     "learning_rate": 3e-5,
     "weight_decay": 0.002,
-    "fp16": True,
+    "fp16": True,        # Changed from False to True
+    "bf16": False,       # Changed from True to False
     "max_grad_norm": 0.3,
     "max_steps": -1,
-    "warmup_ratio": 0.10,
+    "warmup_ratio": 0.03,
     "lr_scheduler_type": "cosine",
-    "evaluation_strategy": "steps",
-    "save_total_limit": 3,
+    "eval_strategy": "steps",
     "dataloader_pin_memory": True,    
     "dataloader_num_workers": 4,
     "eval_steps": 100,
     "report_to": "wandb",
     "torch_compile": False,
-    "torch_compile": False,
+    "save_total_limit": 3,
 }
 
 def formatting_func(example):
