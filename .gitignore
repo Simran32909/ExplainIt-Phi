@@ -34,3 +34,5 @@ src/check.py
 
 #wandb temp files
 wandb_tmp/
+
+models/*

@@ -12,13 +12,13 @@ VAL_DATASET="data/processed/validation.json"
 #saves the fine tuned model
 OUTPUT_DIR="models/phi2-eli5-adapter"
 
-SFT_MAX_SEQ_LENGTH=2048
+SFT_MAX_SEQ_LENGTH=1024
 
 #Quantizations Configs
 BNB_CONFIG={
     "load_in_4bit":True,
     "bnb_4bit_quant_type":"nf4",
-    "bnb_4bit_compute_dtype":"float16",
+    "bnb_4bit_compute_dtype":"bfloat16",
 }
 
 #LORA Configs
@@ -33,13 +33,14 @@ PEFT_CONFIG={
 
 #Training Arguements
 TRAINING_ARGS={
-    "num_train_epochs":1,
-    "per_device_train_batch_size":8,
-    "gradient_accumulation_steps":2,
+    "num_train_epochs":3,
+    "per_device_train_batch_size":6,
+    "per_device_eval_batch_size":6,
+    "gradient_accumulation_steps":3,
     "optim":"paged_adamw_8bit",
-    "save_steps": 50,
+    "save_steps": 100,
     "logging_steps": 50,
-    "learning_rate": 2e-4,
+    "learning_rate": 3e-5,
     "weight_decay": 0.002,
     "fp16": False,
     "bf16": True,
@@ -47,10 +48,13 @@ TRAINING_ARGS={
     "max_steps": -1,
     "warmup_ratio": 0.10,
     "lr_scheduler_type": "cosine",
-    "eval_strategy": "steps",
-    "eval_steps": 50,
+    "evaluation_strategy": "steps",
+    "save_total_limit": 3,
+    "dataloader_pin_memory": True,    
+    "dataloader_num_workers": 4,
+    "eval_steps": 100,
     "report_to": "wandb",
-    "torch_compile": True,
+    "torch_compile": False,
 }
 
 def formatting_func(example):

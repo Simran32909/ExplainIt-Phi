@@ -4,6 +4,7 @@ import os
 import torch
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
 local_wandb_tmp_dir = os.path.join(os.getcwd(), "wandb_tmp")
 os.makedirs(local_wandb_tmp_dir, exist_ok=True)
@@ -20,6 +21,7 @@ from transformers import (
     BitsAndBytesConfig,
     TrainingArguments,
     TrainerCallback,
+    EarlyStoppingCallback,
 )
 from peft import LoraConfig
 from trl import SFTTrainer
@@ -108,6 +110,7 @@ def main():
     model=AutoModelForCausalLM.from_pretrained(
         config.BASE_MODEL_NAME,
         quantization_config=quant_config,
+        torch_dtype=torch.bfloat16,
         trust_remote_code=True,
         use_cache=False,
         device_map="auto",
@@ -115,6 +118,8 @@ def main():
     )
 
     peft_config=LoraConfig(**config.PEFT_CONFIG)
+
+    patience = 3  # early stopping patience for eval checks
 
     training_arguments=TrainingArguments(
         output_dir=config.OUTPUT_DIR,
@@ -133,7 +138,7 @@ def main():
         eval_dataset=val_dataset,
         peft_config=peft_config,
         args=training_arguments,
-        callbacks=[prediction_callback],
+        callbacks=[prediction_callback, EarlyStoppingCallback(early_stopping_patience=patience)],
     )
     print("W&B directories:")
     print("  WANDB_TEMP:", os.environ.get("WANDB_TEMP"))
@@ -141,8 +146,8 @@ def main():
     print("  WANDB_CONFIG_DIR:", os.environ.get("WANDB_CONFIG_DIR"))
 
 
-    print("Starting Training.....")
-    trainer.train()
+    print("Starting (or resuming) Training.....")
+    trainer.train(resume_from_checkpoint=True)
 
     print("Saving fine tuned model adapters.....")
     trainer.save_model(config.OUTPUT_DIR)
