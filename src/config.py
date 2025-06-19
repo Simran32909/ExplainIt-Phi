@@ -34,6 +34,9 @@ PEFT_CONFIG={
 #Training Arguements
 TRAINING_ARGS={
     "num_train_epochs":3,
+    "per_device_train_batch_size":8,
+    "gradient_accumulation_steps":2,
+    "num_train_epochs":3,
     "per_device_train_batch_size":6,
     "per_device_eval_batch_size":6,
     "gradient_accumulation_steps":3,
@@ -42,8 +45,7 @@ TRAINING_ARGS={
     "logging_steps": 50,
     "learning_rate": 3e-5,
     "weight_decay": 0.002,
-    "fp16": False,
-    "bf16": True,
+    "fp16": True,
     "max_grad_norm": 0.3,
     "max_steps": -1,
     "warmup_ratio": 0.10,
@@ -54,6 +56,7 @@ TRAINING_ARGS={
     "dataloader_num_workers": 4,
     "eval_steps": 100,
     "report_to": "wandb",
+    "torch_compile": False,
     "torch_compile": False,
 }
 
