@@ -1,4 +1,4 @@
-#src/fine_tune.py
+# src/fine_tune.py
 
 import os 
 import torch
@@ -110,7 +110,7 @@ def main():
     model=AutoModelForCausalLM.from_pretrained(
         config.BASE_MODEL_NAME,
         quantization_config=quant_config,
-        torch_dtype=torch.bfloat16,
+        torch_dtype=torch.float16,  # Changed from torch.bfloat16
         trust_remote_code=True,
         use_cache=False,
         device_map="auto",
@@ -121,6 +121,7 @@ def main():
 
     patience = 3  # early stopping patience for eval checks
 
+    # Build TrainingArguments for stage-2 fine-tuning (lower LR etc.)
     training_arguments=TrainingArguments(
         output_dir=config.OUTPUT_DIR,
         **config.TRAINING_ARGS,
@@ -144,7 +145,6 @@ def main():
     print("  WANDB_TEMP:", os.environ.get("WANDB_TEMP"))
     print("  WANDB_DIR:", os.environ.get("WANDB_DIR"))
     print("  WANDB_CONFIG_DIR:", os.environ.get("WANDB_CONFIG_DIR"))
-
 
     print("Starting (or resuming) Training.....")
     trainer.train(resume_from_checkpoint=True)
