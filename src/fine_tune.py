@@ -8,8 +8,8 @@ import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
 
-from src.data_module import LLMDataModule
-from src.lightning_module import LLMLightningModule
+from data_module import LLMDataModule
+from lightning_module import LLMLightningModule
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
