@@ -36,3 +36,4 @@ src/check.py
 wandb_tmp/
 
 models/*
+outputs/
