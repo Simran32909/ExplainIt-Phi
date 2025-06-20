@@ -6,4 +6,6 @@ peft
 llama-cpp-python
 jupyter
 gradio
-wandb 
+wandb
+hydra-core
+omegaconf 
