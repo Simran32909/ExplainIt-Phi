@@ -65,3 +65,4 @@ wandb:
   entity: "BrainLoop"
   project: "explain-it-phi-lightning" 
   log_model: "all"
+  
