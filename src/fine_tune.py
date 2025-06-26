@@ -1,6 +1,12 @@
 # src/fine_tune.py
 
 import os
+
+project_root = os.getcwd()  
+cache_dir = os.path.join(project_root, "cache")
+os.makedirs(cache_dir, exist_ok=True)
+os.environ["HF_DATASETS_CACHE"] = cache_dir
+
 import torch
 import hydra
 from omegaconf import DictConfig, OmegaConf
@@ -63,7 +69,7 @@ def main(cfg: DictConfig):
         precision=cfg.trainer.precision,
         log_every_n_steps=cfg.trainer.log_every_n_steps,
         accumulate_grad_batches=cfg.trainer.accumulate_grad_batches,
-        val_check_interval=0.25, # Check validation set 4 times per epoch
+        val_check_interval=1.0, # Check validation set once per epoch
         gradient_clip_val=cfg.trainer.max_grad_norm,
         logger=wandb_logger,
         callbacks=[checkpoint_callback, early_stopping_callback],

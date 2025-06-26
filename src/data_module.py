@@ -27,9 +27,12 @@ class LLMDataModule(pl.LightningDataModule):
         val_dataset = load_dataset("json", data_files=self.cfg.data.val_file, split="train")
 
         if self.cfg.data.num_samples_for_testing:
-            train_dataset = train_dataset.select(range(self.cfg.data.num_samples_for_testing))
-            val_sample_size = max(1, int(self.cfg.data.num_samples_for_testing * 0.2))
-            val_dataset = val_dataset.select(range(val_sample_size))
+            num_train_samples = min(self.cfg.data.num_samples_for_testing, len(train_dataset))
+            train_dataset = train_dataset.select(range(num_train_samples))
+
+            val_sample_size = max(1, int(num_train_samples * 0.2))
+            num_val_samples = min(val_sample_size, len(val_dataset))
+            val_dataset = val_dataset.select(range(num_val_samples))
 
         # We define a nested function here to capture self.tokenizer and self.cfg
         def preprocess_function(examples):

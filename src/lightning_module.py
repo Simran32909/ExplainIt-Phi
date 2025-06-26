@@ -5,6 +5,7 @@ import pytorch_lightning as pl
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from peft import LoraConfig
 from omegaconf import DictConfig
+import bitsandbytes as bnb
 
 class LLMLightningModule(pl.LightningModule):
     def __init__(self, cfg: DictConfig):
@@ -28,7 +29,6 @@ class LLMLightningModule(pl.LightningModule):
             torch_dtype=torch.float16,
             trust_remote_code=True,
             use_cache=False,
-            device_map="auto",
             attn_implementation="flash_attention_2",
         )
         
@@ -54,6 +54,6 @@ class LLMLightningModule(pl.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        optimizer = torch.optim.AdamW(self.parameters(), lr=self.cfg.optimizer.lr, weight_decay=self.cfg.optimizer.weight_decay)
+        optimizer = bnb.optim.PagedAdamW8bit(self.parameters(), lr=self.cfg.optimizer.lr, weight_decay=self.cfg.optimizer.weight_decay)
         return optimizer 
 
