@@ -63,12 +63,11 @@ class LLMDataModule(pl.LightningDataModule):
                 "labels": model_inputs["labels"]
             }
 
-        # Use batched processing with multiple processes for speed
+        # Use batched processing without multiprocessing to avoid CUDA issues
         self.train_dataset = train_dataset.map(
             preprocess_function, 
             batched=True, 
             remove_columns=train_dataset.column_names,
-            num_proc=4,  # Use multiple processes
             batch_size=100  # Process in larger batches
         )
         
@@ -76,7 +75,6 @@ class LLMDataModule(pl.LightningDataModule):
             preprocess_function, 
             batched=True, 
             remove_columns=val_dataset.column_names,
-            num_proc=4,
             batch_size=100
         )
 

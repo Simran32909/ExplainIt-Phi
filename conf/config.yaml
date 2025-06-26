@@ -33,7 +33,7 @@ data:
   val_file: "data/processed/validation.json"
   num_samples_for_testing: 50000
   batch_size: 4
-  num_workers: 2
+  num_workers: 0
   pin_memory: True
 
 trainer:

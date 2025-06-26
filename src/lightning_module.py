@@ -2,7 +2,7 @@
 
 import torch
 import pytorch_lightning as pl
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, get_linear_schedule_with_warmup
 from peft import LoraConfig
 from omegaconf import DictConfig
 import bitsandbytes as bnb
@@ -80,14 +80,16 @@ class LLMLightningModule(pl.LightningModule):
         
         # Configure scheduler
         if self.cfg.scheduler.type == "linear":
-            from transformers import get_linear_schedule_with_warmup
-            
-            # Calculate total steps
-            train_dataloader = self.trainer.train_dataloader
-            if isinstance(train_dataloader, list):
-                train_dataloader = train_dataloader[0]
-            
-            total_steps = len(train_dataloader) * self.trainer.max_epochs // self.trainer.accumulate_grad_batches
+            # Estimate total steps based on dataset size and batch parameters
+            # This avoids accessing trainer.train_dataloader which may not be available yet
+            if hasattr(self.cfg.data, 'num_samples_for_testing') and self.cfg.data.num_samples_for_testing:
+                num_samples = self.cfg.data.num_samples_for_testing
+            else:
+                # Default to a reasonable number if we can't determine dataset size
+                num_samples = 50000
+                
+            steps_per_epoch = num_samples // (self.cfg.data.batch_size * self.cfg.trainer.accumulate_grad_batches)
+            total_steps = steps_per_epoch * self.cfg.trainer.max_epochs
             warmup_steps = int(total_steps * self.cfg.scheduler.warmup_ratio)
             
             scheduler = get_linear_schedule_with_warmup(
