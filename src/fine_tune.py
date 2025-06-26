@@ -12,7 +12,8 @@ import hydra
 from omegaconf import DictConfig, OmegaConf
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
-from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
+from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping, LearningRateMonitor
+from pytorch_lightning.strategies import DeepSpeedStrategy
 
 from data_module import LLMDataModule
 from lightning_module import LLMLightningModule
@@ -53,13 +54,16 @@ def main(cfg: DictConfig):
         save_top_k=cfg.trainer.save_top_k,
         monitor=cfg.trainer.monitor,
         mode=cfg.trainer.mode,
-        filename=f"{cfg.project_name}-{{epoch:02d}}-{{val_loss:.2f}}",
+        filename=f"{cfg.project_name}-{{epoch:02d}}-{{val_loss:.2f}}-{{val_perplexity:.2f}}",
+        save_last=True,
     )
     early_stopping_callback = EarlyStopping(
         monitor=cfg.trainer.monitor,
         patience=cfg.trainer.early_stopping_patience,
         mode=cfg.trainer.mode,
+        verbose=True,
     )
+    lr_monitor = LearningRateMonitor(logging_interval="step")
 
     # Initialize Trainer
     trainer = pl.Trainer(
@@ -69,10 +73,14 @@ def main(cfg: DictConfig):
         precision=cfg.trainer.precision,
         log_every_n_steps=cfg.trainer.log_every_n_steps,
         accumulate_grad_batches=cfg.trainer.accumulate_grad_batches,
-        val_check_interval=1.0, # Check validation set once per epoch
+        val_check_interval=0.5,  # Check validation set twice per epoch
         gradient_clip_val=cfg.trainer.max_grad_norm,
         logger=wandb_logger,
-        callbacks=[checkpoint_callback, early_stopping_callback],
+        callbacks=[checkpoint_callback, early_stopping_callback, lr_monitor],
+        deterministic=False,  # Faster training
+        enable_progress_bar=True,
+        enable_model_summary=True,
+        num_sanity_val_steps=1,  # Only run one batch for sanity check
     )
 
     # Start training

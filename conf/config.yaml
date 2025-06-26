@@ -20,9 +20,9 @@ model:
 
   # PEFT/LoRA
   peft:
-    r: 32
-    lora_alpha: 64
-    lora_dropout: 0.05
+    r: 16
+    lora_alpha: 32
+    lora_dropout: 0.1
     bias: "none"
     task_type: "CAUSAL_LM"
     target_modules: ["Wqkv", "fc1", "fc2"]
@@ -31,34 +31,34 @@ model:
 data:
   train_file: "data/processed/train.json"
   val_file: "data/processed/validation.json"
-  num_samples_for_testing: 200000 # Set to a number for quick testing or if i dont wish to train on the full dataset
-  batch_size: 8
-  num_workers: 4
+  num_samples_for_testing: 50000
+  batch_size: 4
+  num_workers: 2
   pin_memory: True
 
 trainer:
-  max_epochs: 2
+  max_epochs: 3
   accelerator: "gpu"
   devices: 1
   precision: "16-mixed" 
-  log_every_n_steps: 50
-  accumulate_grad_batches: 10
-  max_grad_norm: 0.3
+  log_every_n_steps: 25
+  accumulate_grad_batches: 8
+  max_grad_norm: 1.0
   # Callbacks
-  early_stopping_patience: 10
+  early_stopping_patience: 3
   # Checkpointing
-  save_top_k: 3
+  save_top_k: 2
   monitor: "val_loss"
   mode: "min"
 
 # Optimizer and scheduler
 optimizer:
-  lr: 3e-5
-  weight_decay: 0.002
+  lr: 2e-4
+  weight_decay: 0.01
 
 scheduler:
-  type: "cosine_with_restarts"
-  warmup_ratio: 0.03
+  type: "linear"
+  warmup_ratio: 0.05
 
 # W&B logger 
 wandb:

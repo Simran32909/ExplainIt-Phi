@@ -6,6 +6,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from peft import LoraConfig
 from omegaconf import DictConfig
 import bitsandbytes as bnb
+import math
 
 class LLMLightningModule(pl.LightningModule):
     def __init__(self, cfg: DictConfig):
@@ -44,16 +45,64 @@ class LLMLightningModule(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         outputs = self(batch)
         loss = outputs.loss
+        
+        # Calculate perplexity
+        perplexity = torch.exp(loss)
+        
+        # Log metrics
         self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log("train_perplexity", perplexity, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        
         return loss
 
     def validation_step(self, batch, batch_idx):
         outputs = self(batch)
         loss = outputs.loss
+        
+        # Calculate perplexity
+        perplexity = torch.exp(loss)
+        
+        # Log metrics
         self.log("val_loss", loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        self.log("val_perplexity", perplexity, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        
         return loss
 
     def configure_optimizers(self):
-        optimizer = bnb.optim.PagedAdamW8bit(self.parameters(), lr=self.cfg.optimizer.lr, weight_decay=self.cfg.optimizer.weight_decay)
+        # Use 8-bit Adam for memory efficiency
+        optimizer = bnb.optim.PagedAdamW8bit(
+            self.parameters(), 
+            lr=self.cfg.optimizer.lr, 
+            weight_decay=self.cfg.optimizer.weight_decay,
+            betas=(0.9, 0.999),
+            eps=1e-8
+        )
+        
+        # Configure scheduler
+        if self.cfg.scheduler.type == "linear":
+            from transformers import get_linear_schedule_with_warmup
+            
+            # Calculate total steps
+            train_dataloader = self.trainer.train_dataloader
+            if isinstance(train_dataloader, list):
+                train_dataloader = train_dataloader[0]
+            
+            total_steps = len(train_dataloader) * self.trainer.max_epochs // self.trainer.accumulate_grad_batches
+            warmup_steps = int(total_steps * self.cfg.scheduler.warmup_ratio)
+            
+            scheduler = get_linear_schedule_with_warmup(
+                optimizer,
+                num_warmup_steps=warmup_steps,
+                num_training_steps=total_steps
+            )
+            
+            return {
+                "optimizer": optimizer,
+                "lr_scheduler": {
+                    "scheduler": scheduler,
+                    "interval": "step",
+                }
+            }
+        
         return optimizer 
 
