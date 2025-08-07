@@ -89,7 +89,7 @@ class LLMDataModule(pl.LightningDataModule):
             num_workers=self.cfg.data.num_workers,
             pin_memory=self.cfg.data.pin_memory,
             shuffle=True,
-            persistent_workers=True if self.cfg.data.num_workers > 0 else False
+            persistent_workers=True if self.cfg.data.num_workers > 0 else False,
         )
 
     def val_dataloader(self):

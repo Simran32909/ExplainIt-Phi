@@ -18,7 +18,7 @@ from pytorch_lightning.strategies import DeepSpeedStrategy
 from data_module import LLMDataModule
 from lightning_module import LLMLightningModule
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+#os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
 # Set up local W&B temporary directories
@@ -81,6 +81,7 @@ def main(cfg: DictConfig):
         enable_progress_bar=True,
         enable_model_summary=True,
         num_sanity_val_steps=1,  # Only run one batch for sanity check
+        strategy=cfg.trainer.strategy,
     )
 
     # Start training
