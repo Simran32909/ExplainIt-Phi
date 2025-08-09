@@ -39,7 +39,7 @@ def main():
     model = model.merge_and_unload() # Merge weights and free memory
 
     # Generate text 
-    prompt = "Explain the concept of transformer architecture in deep learning in simple terms."
+    prompt = "Why is trump raising tariffs?"
     input_text = f"Instruct: {prompt}\nOutput:"
 
     print(f"\nGenerating response for prompt: '{prompt}'")
