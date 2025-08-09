@@ -10,7 +10,7 @@ from transformers import (
     get_cosine_schedule_with_warmup
 )
 from peft import LoraConfig
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 import bitsandbytes as bnb
 import math
 from pathlib import Path
@@ -46,7 +46,10 @@ class LLMLightningModule(pl.LightningModule):
         )
         
         # Add LoRA adapters
-        peft_config = LoraConfig(**self.cfg.model.peft)
+        peft_params = OmegaConf.to_container(
+            self.cfg.model.peft, resolve=True
+        )
+        peft_config = LoraConfig(**peft_params)
         self.model.add_adapter(peft_config)
         self.model.gradient_checkpointing_enable()
 
