@@ -38,3 +38,6 @@ wandb_tmp/
 models/*
 outputs/
 cache/
+
+#llama.cpp
+llama.cpp/
