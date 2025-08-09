@@ -41,7 +41,16 @@ def main():
 
     model = model.merge_and_unload()  # Permenantly merge adapter wts into the base model and removes adapters from the memory\
 
-    model.save_pretrained(output_dir) 
+    # --- Clean the state dictionary ---
+    print("Cleaning model state dictionary...")
+    state_dict = model.state_dict()
+    keys_to_delete = [key for key in state_dict if key.endswith(".absmax")]
+    for key in keys_to_delete:
+        del state_dict[key]
+        print(f"  - Removed tensor: {key}")
+    print(f"Removed {len(keys_to_delete)} unnecessary tensors.")
+
+    model.save_pretrained(output_dir)
 
     tokenizer.save_pretrained(output_dir)
 
