@@ -32,7 +32,7 @@ def main():
     tokenizer.padding_side = "right"
 
     # Load and merge the LoRA adapter 
-    adapter_path = "/ssd_scratch/jyothi.swaroopa/Simran/ExplainIt-Phi/models/phi2-eli5-adapter-r32-fresh/final_model"
+    adapter_path = "models/phi2-eli5-adapter-r32-fresh/final_model"
     print(f"Loading LoRA adapter from: {adapter_path}")
     
     model = PeftModel.from_pretrained(base_model, adapter_path)
