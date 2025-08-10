@@ -3,14 +3,15 @@
 This repo contains the code and workflow for fine-tuning the `microsoft/phi-2` model using the QLoRA. The final output is a set of GGUF models suitable for high-performance local inference with `llama.cpp`.
 
 ## Table of Contents
-1.  [Dataset](#dataset)
-2.  [Setup](#setup)
-3.  [Fine-Tuning](#1-fine-tuning)
-4.  [Merging the Adapter](#2-merging-the-qlora-adapter)
-5.  [GGUF Conversion & Quantization](#3-gguf-conversion--quantization)
-6.  [Running Local Inference](#4-running-local-inference)
-7.  [Model Artifacts](#5-model-artifacts)
-8.  [Evaluation & Results](#evaluation--results)
+1.  [Fine-Tuning](#1-fine-tuning)
+2.  [Merging the QLoRA Adapter](#2-merging-the-qlora-adapter)
+3.  [GGUF Conversion & Quantization](#3-gguf-conversion--quantization)
+    *   [3.1 Build `llama.cpp`](#31-build-llamacpp)
+    *   [3.2 Convert to FP16 GGUF](#32-convert-to-fp16-gguf)
+    *   [3.3 Quantize the Model](#33-quantize-the-model)
+4.  [Running Local Inference](#4-running-local-inference)
+5.  [Model Artifacts](#5-model-artifacts)
+6.  [Evaluation & Results](#6-evaluation--results)
 
 ## Dataset
 
