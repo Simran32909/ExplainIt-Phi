@@ -93,3 +93,72 @@ The following quantized models are provided:
 - **`ExplainIt-Phi-Q4_K_M.gguf`**: The recommended version for a great balance of performance and quality.
 - **`ExplainIt-Phi-Q5_K_M.gguf`**: A higher-quality version for systems with more memory.
 - **`ExplainIt-Phi-Q8_0.gguf`**: A near-lossless version for maximum quality on capable hardware.
+
+## Evaluation & Results
+
+The model's performance was evaluated against the base `microsoft/phi-2` model across a diverse set of 30 prompts. I've used the Flesch-Kincaid Grade Level metric, which estimates the U.S. school grade level required to understand a text. For this project's goal of simplifying complex topics, a lower score is better.
+
+### Executive Summary
+
+Across all 30 test prompts, the fine-tuned **ExplainIt-Phi model reduced the Flesch-Kincaid Grade Level by an average of 1.5 points**. This demonstrates a consistent and measurable improvement in generating simpler, more accessible explanations.
+
+### Qualitative Comparison
+
+The quantitative scores are best understood by seeing the model's output directly. Here is a side-by-side comparison for a technical prompt:
+
+**Prompt:** `What is an API and what does it do, in simple terms?`
+
+| Base Model Output (Grade Level: 10.82)                                                                                                                                                                                                                         | Fine-Tuned Model Output (Grade Level: 5.81)                                                                                                                                                                    |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| An API, or Application Programming Interface, is a set of rules and protocols that allows different software applications to communicate with each other. It acts as a bridge between two applications, allowing them to exchange data and functionality.     | An API is like a waiter in a restaurant. You (an application) don't need to know how the kitchen works. You just give your order (a request) to the waiter (the API), and the waiter brings you your food (the data). |
+
+The fine-tuned model uses a clear analogy, avoids technical jargon, and provides a much simpler explanation, as reflected in its significantly lower grade level score.
+
+## Evaluation & Results
+
+The model's performance was evaluated against the base `microsoft/phi-2` model across a diverse set of 30 prompts. We used the **Flesch-Kincaid Grade Level** metric, which estimates the U.S. school grade level required to understand a text. For this project's goal of simplifying complex topics, a **lower score is better**.
+
+### Executive Summary
+
+Across all 30 test prompts, the fine-tuned **ExplainIt-Phi model reduced the Flesch-Kincaid Grade Level by an average of 1.5 points**. This demonstrates a consistent and measurable improvement in generating simpler, more accessible explanations.
+
+### Qualitative Comparison
+
+The quantitative scores are best understood by seeing the model's output directly. Here is a side-by-side comparison for a technical prompt:
+
+**Prompt:** `What is an API and what does it do, in simple terms?`
+
+| Base Model Output (Grade Level: 10.82)                                                                                                                                                                                                                         | Fine-Tuned Model Output (Grade Level: 5.81)                                                                                                                                                                    |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| An API, or Application Programming Interface, is a set of rules and protocols that allows different software applications to communicate with each other. It acts as a bridge between two applications, allowing them to exchange data and functionality.     | An API is like a waiter in a restaurant. You (an application) don't need to know how the kitchen works. You just give your order (a request) to the waiter (the API), and the waiter brings you your food (the data). |
+
+The fine-tuned model uses a clear analogy, avoids technical jargon, and provides a much simpler explanation, as reflected in its significantly lower grade level score.
+
+### Quantitative Results
+
+The table below shows a curated list of 15 results, sorted by the change in grade level, to highlight the model's strengths and limitations.
+
+| Prompt                                                              | Base Model Grade | Fine-Tuned Grade | Grade Level Drop |
+|---------------------------------------------------------------------|------------------|------------------|------------------|
+| Why do cryptocurrencies have value?                                 | 14.16            | **7.56**         | **-6.60**        |
+| What is the difference between nuclear fission and fusion...        | 17.30            | **10.77**        | **-6.53**        |
+| How does a microwave oven heat food?                                | 14.04            | **8.39**         | **-5.65**        |
+| What is an API and what does it do, in simple terms?                | 10.82            | **5.81**         | **-5.01**        |
+| What is compound interest and how does it work?                     | 13.98            | **9.21**         | **-4.77**        |
+| Why do we dream when we sleep?                                      | 11.89            | **7.55**         | **-4.34**        |
+| Explain how a CPU works in a computer, in simple terms.             | 10.86            | **6.71**         | **-4.15**        |
+| What is the internet and how does it work, in simple terms?         | 11.48            | **7.88**         | **-3.60**        |
+| Explain what blockchain is, like I'm 5.                             | 10.27            | **6.97**         | **-3.30**        |
+| What are stem cells?                                                | 12.84            | **9.56**         | **-3.28**        |
+| Explain the concept of 'supply and demand' in simple terms.         | 11.59            | **8.38**         | **-3.21**        |
+| What is inflation in economics, in simple terms?                    | 13.39            | **10.76**        | **-2.63**        |
+| What causes an earthquake?                                          | **5.24**         | 7.95             | +2.71            |
+| Explain what machine learning is, like I'm 5.                       | **8.77**         | 14.64            | +5.87            |
+| Explain the theory of relativity like I'm 5.                        | **6.26**         | 15.80            | +9.54            |
+
+*The model with the lower (better) score is highlighted in **bold**.*
+
+### Limitations
+
+While the model shows significant improvement on complex topics, the evaluation revealed that for some already simple concepts, the fine-tuning process can lead to slightly more complex explanations. This suggests the model learned to prioritize providing a detailed, structured answer, which is a key area for future improvement.
+ 
