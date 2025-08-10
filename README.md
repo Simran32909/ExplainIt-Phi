@@ -94,26 +94,6 @@ The following quantized models are provided:
 - **`ExplainIt-Phi-Q5_K_M.gguf`**: A higher-quality version for systems with more memory.
 - **`ExplainIt-Phi-Q8_0.gguf`**: A near-lossless version for maximum quality on capable hardware.
 
-## Evaluation & Results
-
-The model's performance was evaluated against the base `microsoft/phi-2` model across a diverse set of 30 prompts. I've used the Flesch-Kincaid Grade Level metric, which estimates the U.S. school grade level required to understand a text. For this project's goal of simplifying complex topics, a lower score is better.
-
-### Executive Summary
-
-Across all 30 test prompts, the fine-tuned **ExplainIt-Phi model reduced the Flesch-Kincaid Grade Level by an average of 1.5 points**. This demonstrates a consistent and measurable improvement in generating simpler, more accessible explanations.
-
-### Qualitative Comparison
-
-The quantitative scores are best understood by seeing the model's output directly. Here is a side-by-side comparison for a technical prompt:
-
-**Prompt:** `What is an API and what does it do, in simple terms?`
-
-| Base Model Output (Grade Level: 10.82)                                                                                                                                                                                                                         | Fine-Tuned Model Output (Grade Level: 5.81)                                                                                                                                                                    |
-|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| An API, or Application Programming Interface, is a set of rules and protocols that allows different software applications to communicate with each other. It acts as a bridge between two applications, allowing them to exchange data and functionality.     | An API is like a waiter in a restaurant. You (an application) don't need to know how the kitchen works. You just give your order (a request) to the waiter (the API), and the waiter brings you your food (the data). |
-
-The fine-tuned model uses a clear analogy, avoids technical jargon, and provides a much simpler explanation, as reflected in its significantly lower grade level score.
-
 ## 6. Evaluation & Results
 
 The model's performance was evaluated against the base `microsoft/phi-2` model across a diverse set of 30 prompts. We used the **Flesch-Kincaid Grade Level** metric, which estimates the U.S. school grade level required to understand a text. For this project's goal of simplifying complex topics, a **lower score is better**.
