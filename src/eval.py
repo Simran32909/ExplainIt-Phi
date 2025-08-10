@@ -9,11 +9,44 @@ ADAPTER_PATH = "models/phi2-eli5-adapter-r32-fresh/final_model" # Update this pa
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 PROMPTS = [
+    # --- Technology & Computer Science ---
+    "Explain how a CPU works in a computer, in simple terms.",
+    "What is the internet and how does it work, in simple terms?",
+    "Explain what blockchain is, like I'm 5.",
+    "How do GPS satellites know where you are, in simple terms?",
+    "What is an API and what does it do, in simple terms?",
+    "What is the difference between RAM and storage on a computer?",
+    "Explain what machine learning is, like I'm 5.",
+    "How does a search engine like Google find information?",
+
+    # --- Physics & Cosmology ---
     "Explain the concept of black holes in simple terms.",
-    "Why is the sky blue?",
-    "Explain how a CPU works in a computer.",
-    "What is the difference between nuclear fission and fusion?",
-    "Explain the theory of relativity like I'm 5."
+    "What is the difference between nuclear fission and fusion, in simple terms?",
+    "Explain the theory of relativity like I'm 5.",
+    "What is dark matter and why do scientists think it exists?",
+    "How does a rainbow form?",
+
+    # --- Biology & Health ---
+    "How does photosynthesis work, in simple terms?",
+    "How do vaccines work to protect us from diseases?",
+    "What is DNA and what does it do, in simple terms?",
+    "Explain the human immune system like I'm 5.",
+    "What are stem cells?",
+
+    # --- Economics & Finance ---
+    "What is inflation in economics, in simple terms?",
+    "Explain the concept of 'supply and demand' in simple terms.",
+    "What is compound interest and how does it work?",
+    "Why do cryptocurrencies have value?",
+
+    # --- Earth Science & Everyday Phenomena ---
+    "What causes the seasons, in simple terms?",
+    "How does soap clean things, in simple terms?",
+    "How does a microwave oven heat food?",
+    "What causes an earthquake?",
+    "Explain the water cycle.",
+    "How is glass made from sand?",
+    "Why do we dream when we sleep?",
 ]
 
 # --- Model Loading Functions (You will adapt your existing code here) ---
@@ -29,6 +62,8 @@ def load_base_model():
         device_map=DEVICE,
         trust_remote_code=True
     )
+    # Set pad token for robust generation
+    tokenizer.pad_token = tokenizer.eos_token
     return model, tokenizer
 
 def load_finetuned_model():
@@ -46,11 +81,15 @@ def load_finetuned_model():
     model = PeftModel.from_pretrained(base_model, ADAPTER_PATH)
     model = model.merge_and_unload()
     
+    # Set pad token for robust generation
+    tokenizer.pad_token = tokenizer.eos_token
+    
     return model, tokenizer
 
 def generate_response(model, tokenizer, prompt):
     input_text = f"Instruct: {prompt}\nOutput:"
-    inputs = tokenizer(input_text, return_tensors="pt", return_attention_mask=False).to(DEVICE)
+    # Let the tokenizer create the attention mask
+    inputs = tokenizer(input_text, return_tensors="pt", return_attention_mask=True).to(DEVICE)
     
     outputs = model.generate(
         **inputs,
