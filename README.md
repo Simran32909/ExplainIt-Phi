@@ -1,4 +1,4 @@
-# ExplainIt-Phi: Phi-2 Customized for ELI5-Style Explanations"
+# ExplainIt-Phi: Phi-2 for ELI5-Style Explanations
 
 This repo contains the code and workflow for fine-tuning the `microsoft/phi-2` model using the QLoRA. The final output is a set of GGUF models suitable for high-performance local inference with `llama.cpp`.
 
