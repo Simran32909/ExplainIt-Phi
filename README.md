@@ -96,7 +96,7 @@ The following quantized models are provided:
 
 ## 6. Evaluation & Results
 
-The model's performance was evaluated against the base `microsoft/phi-2` model across a diverse set of 30 prompts. We used the **Flesch-Kincaid Grade Level** metric, which estimates the U.S. school grade level required to understand a text. For this project's goal of simplifying complex topics, a **lower score is better**.
+The model's performance was evaluated against the base `microsoft/phi-2` model across a diverse set of 30 prompts. I've used the **Flesch-Kincaid Grade Level** metric, which estimates the U.S. school grade level required to understand a text. For this project's goal of simplifying complex topics, a **lower score is better**.
 
 ### Executive Summary
 
