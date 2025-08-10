@@ -1,4 +1,4 @@
-# ExplainIt-Phi: Fine-Tuned Phi-2 for "Explain-me-like-I'm-5"
+# ExplainIt-Phi: Phi-2 Customized for ELI5-Style Explanations"
 
 This repo contains the code and workflow for fine-tuning the `microsoft/phi-2` model using the QLoRA. The final output is a set of GGUF models suitable for high-performance local inference with `llama.cpp`.
 
@@ -114,7 +114,7 @@ The quantitative scores are best understood by seeing the model's output directl
 
 The fine-tuned model uses a clear analogy, avoids technical jargon, and provides a much simpler explanation, as reflected in its significantly lower grade level score.
 
-## Evaluation & Results
+## 6. Evaluation & Results
 
 The model's performance was evaluated against the base `microsoft/phi-2` model across a diverse set of 30 prompts. We used the **Flesch-Kincaid Grade Level** metric, which estimates the U.S. school grade level required to understand a text. For this project's goal of simplifying complex topics, a **lower score is better**.
 
