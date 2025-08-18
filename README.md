@@ -12,6 +12,7 @@ This repo contains the code and workflow for fine-tuning the `microsoft/phi-2` m
 4.  [Running Local Inference](#4-running-local-inference)
 5.  [Model Artifacts](#5-model-artifacts)
 6.  [Evaluation & Results](#6-evaluation--results)
+7.  [To-Do](#7-to-do)
 
 ## Dataset
 
@@ -154,16 +155,16 @@ The table below shows a curated list of 15 results, sorted by the change in grad
 While the model shows significant improvement on complex topics, the evaluation revealed that for some already simple concepts, the fine-tuning process can lead to slightly more complex explanations. This suggests the model learned to prioritize providing a detailed, structured answer, which is a key area for future improvement.
  
 
-# To-Do
+## 7. To-Do
 
 ### 1. Proof of Quality
-- [ ] Run benchmark tests (MT-Bench, HELM-lite, or curated ELI5 prompts).
-- [ ] Publish side-by-side results: Base Phi-2 vs. ExplainIt-Phi.
-- [ ] Add results tables/plots to README.
+- [ ] Running benchmark tests (MT-Bench, HELM-lite, or curated ELI5 prompts).
+- [ ] Publish side-by-side results
+- [ ] Run light evals
 
 ### 2. Accessibility
 - [ ] Create a Hugging Face Space demo (Gradio/Streamlit).
-- [ ] Add example prompts in README (copy-paste ready).
+- [ ] Adding example prompts in README .
 
 ### 3. Documentation
 - [ ] Expand model card:
@@ -174,6 +175,5 @@ While the model shows significant improvement on complex topics, the evaluation 
 - [ ] Show memory usage & inference speed on CPU/GPU.
 
 ### 4. Adoption & Maintenance
-- [ ] Add Hugging Face tags (education, ELI5, phi-2, GGUF, analogy).
 - [ ] Release small updates (v1.1, v1.2) to show active maintenance.
-- [ ] Consider releasing LoRA checkpoint for further fine-tuning.
+- [ ] Release LoRA checkpoint for further fine-tuning.
