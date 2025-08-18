@@ -12,7 +12,7 @@ This repo contains the code and workflow for fine-tuning the `microsoft/phi-2` m
 4.  [Running Local Inference](#4-running-local-inference)
 5.  [Model Artifacts](#5-model-artifacts)
 6.  [Evaluation & Results](#6-evaluation--results)
-7.  [To-Do](#7-to-do)
+7.  [TODO](#7-TODO)
 
 ## Dataset
 
@@ -155,7 +155,7 @@ The table below shows a curated list of 15 results, sorted by the change in grad
 While the model shows significant improvement on complex topics, the evaluation revealed that for some already simple concepts, the fine-tuning process can lead to slightly more complex explanations. This suggests the model learned to prioritize providing a detailed, structured answer, which is a key area for future improvement.
  
 
-## 7. To-Do
+## 7. TODO
 
 ### 1. Proof of Quality
 - [ ] Running benchmark tests (MT-Bench, HELM-lite, or curated ELI5 prompts).
